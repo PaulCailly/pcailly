@@ -934,8 +934,6 @@
         "  /\\_/\\  ",
         " ( o.o ) ",
         "  > ^ <  ",
-        " /|   |\\ ",
-        "(_|   |_)",
       ];
       cat.forEach(l => addLine(l, "line-ascii"));
       addLine("");
