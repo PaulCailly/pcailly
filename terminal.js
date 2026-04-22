@@ -13,8 +13,20 @@
   let konamiBuffer = [];
   let commandCount = 0;
   let partyMode = false;
+  const sessionStart = Date.now();
 
   const KONAMI = ["ArrowUp","ArrowUp","ArrowDown","ArrowDown","ArrowLeft","ArrowRight","ArrowLeft","ArrowRight","b","a"];
+
+  // ── analytics helper ───────────────────────────────────
+  function track(event, props = {}) {
+    if (window.posthog) {
+      posthog.capture(event, {
+        ...props,
+        session_command_count: commandCount,
+        session_duration_sec: Math.round((Date.now() - sessionStart) / 1000),
+      });
+    }
+  }
 
   // regex to catch any hack-related command
   const HACK_RE = /\b(hack|hacking|exploit|breach|pentest|nmap|metasploit|sqlinjection|sqli|xss|bruteforce|brute.?force|ddos|payload|shellcode|rootkit|trojan|phishing|keylog|wireshark|burpsuite|hydra|john|hashcat|aircrack|nikto|gobuster|dirbuster|reverse.?shell|backdoor|pwn|0day|zero.?day|inject|overflow|crack|sniff)\b/i;
@@ -395,6 +407,12 @@
         <a href="https://linkedin.com/in/paulcailly" target="_blank" rel="noopener"><i class="fab fa-linkedin"></i> <span class="link-label">LinkedIn</span></a>
         <a href="mailto:hello@pcailly.com"><i class="fas fa-envelope"></i> <span class="link-label">Email</span></a>
       `;
+      div.querySelectorAll("a").forEach(a => {
+        a.addEventListener("click", () => {
+          const label = a.querySelector(".link-label")?.textContent || "unknown";
+          track("link_clicked", { destination: label.toLowerCase(), url: a.href });
+        });
+      });
       output.appendChild(div);
       addLine("");
     },
@@ -563,6 +581,7 @@
       } else {
         startMatrix();
         addLine("Matrix rain activated. Type 'matrix' again to stop.", "line-success");
+        track("easter_egg_triggered", { type: "matrix" });
       }
     },
 
@@ -631,6 +650,7 @@
         fireworks(20);
         addLine("PARTY MODE ACTIVATED", "line-rainbow");
         addLine("Type 'party' again to stop the madness.", "line-output");
+        track("easter_egg_triggered", { type: "party_mode" });
       } else {
         document.documentElement.classList.remove("party");
         addLine("Party's over. Back to work.", "line-output");
@@ -789,6 +809,7 @@
     commands.links();
     scrollBottom();
     input.focus();
+    track("terminal_booted");
   }
 
   // ── command processing ──────────────────────────────────
@@ -812,17 +833,22 @@
 
     // Hack regex — catch anything suspicious and reverse-hack them
     if (HACK_RE.test(fullLower)) {
+      track("easter_egg_triggered", { type: "hack_attempt", command: trimmed });
       await reverseHack(trimmed);
       scrollBottom();
       return;
     }
 
     // Full-string matches
+    let isValid = true;
     if (fullLower === "rm -rf /" || fullLower === "rm -rf /*" || fullLower.startsWith("rm -rf")) {
+      track("easter_egg_triggered", { type: "rm_rf" });
       await commands["rm"](trimmed.slice(3));
     } else if (fullLower === "wake up" || fullLower === "wake up neo") {
+      track("easter_egg_triggered", { type: "wake_up_neo" });
       await commands["wake up"]();
     } else if (fullLower === "sudo rm -rf /") {
+      track("easter_egg_triggered", { type: "sudo_rm_rf" });
       shake();
       addLine("WITH SUDO? You absolute maniac.", "line-error");
       await rmrf();
@@ -833,14 +859,18 @@
     } else if (fullLower === "make me a sandwich") {
       addLine("What? Make it yourself.", "line-error");
     } else if (fullLower === "sudo make me a sandwich") {
+      track("easter_egg_triggered", { type: "sudo_sandwich" });
       addLine("Okay.", "line-success");
     } else if (fullLower.startsWith("say ")) {
       const msg = trimmed.slice(4);
       cowsay(msg);
     } else {
+      isValid = false;
       addLine(`command not found: ${cmd}`, "line-error");
       addLine(`Type 'help' for available commands.`, "line-output");
     }
+
+    track("command_executed", { command: cmd, args, is_valid: isValid });
 
     scrollBottom();
   }
@@ -899,13 +929,21 @@
     if (konamiBuffer.length > 10) konamiBuffer.shift();
     if (konamiBuffer.join(",") === KONAMI.join(",")) {
       konamiBuffer = [];
-      fireworks(30);
+      addLine("");
+      const cat = [
+        "  /\\_/\\  ",
+        " ( o.o ) ",
+        "  > ^ <  ",
+        " /|   |\\ ",
+        "(_|   |_)",
+      ];
+      cat.forEach(l => addLine(l, "line-ascii"));
       addLine("");
       addLine("KONAMI CODE ACTIVATED.", "line-rainbow");
-      addLine("You are a person of exquisite taste.", "line-success");
       addLine("+30 lives. Not that you needed them.", "line-output");
       addLine("");
       scrollBottom();
+      track("easter_egg_triggered", { type: "konami_code" });
     }
   });
 
