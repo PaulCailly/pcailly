@@ -880,9 +880,6 @@
   // ── boot sequence ───────────────────────────────────────
 
   async function bootSequence() {
-    addCmd("whoami");
-    addLine("Paul Cailly", "line-output");
-    addLine("");
     commands.links();
     scrollBottom();
     input.focus();
