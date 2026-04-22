@@ -193,75 +193,57 @@
   // ── reverse hack simulation ─────────────────────────────
 
   async function reverseHack(originalCmd) {
-    terminal.classList.add("hacker");
-    scanlines.classList.add("active");
-
-    addLine("");
-    await typeText("[ALERT] Unauthorized access attempt detected.", "line-error", 20);
-    await sleep(600);
-    await typeText("[ALERT] Activating defensive countermeasures.", "line-error", 20);
-    await sleep(400);
-
-    startMatrix();
-    await sleep(300);
-
+    const ts = () => new Date().toISOString();
     const fakeIp = `${Math.floor(Math.random()*223)+1}.${Math.floor(Math.random()*255)}.${Math.floor(Math.random()*255)}.${Math.floor(Math.random()*255)}`;
     const fakeMac = Array.from({length:6}, () => Math.floor(Math.random()*256).toString(16).padStart(2,"0")).join(":");
     const fakeAsn = `AS${Math.floor(Math.random()*60000)+1000}`;
-    const timestamp = new Date().toISOString();
+    const incidentId = Math.random().toString(36).slice(2, 14).toUpperCase();
+    const tunnelPort = Math.floor(Math.random()*60000)+1024;
+    const rdns = ["corp-workstation.internal","dev-machine.home.arpa","unknown-host.residential.isp"][Math.floor(Math.random()*3)];
 
-    const steps = [
-      { t: `[${timestamp}] TRACE    Backtrace initiated on inbound connection`, c: "line-cyan" },
-      { t: `[${timestamp}] TRACE    Source: ${fakeIp}`, c: "line-cyan" },
-      { t: `[${timestamp}] TRACE    MAC: ${fakeMac}`, c: "line-cyan" },
-      { t: `[${timestamp}] TRACE    ASN: ${fakeAsn}`, c: "line-cyan" },
-      { t: `[${timestamp}] TRACE    Reverse DNS: ${["corp-workstation.internal","dev-machine.home.arpa","unknown-host.residential.isp"][Math.floor(Math.random()*3)]}`, c: "line-cyan" },
-      { t: `[${timestamp}] SCAN     Port scan on origin host...`, c: "line-pink" },
-      { t: `[${timestamp}] SCAN       22/tcp   open   ssh        OpenSSH 8.9`, c: "line-pink" },
-      { t: `[${timestamp}] SCAN       80/tcp   open   http       nginx/1.18`, c: "line-pink" },
-      { t: `[${timestamp}] SCAN       3306/tcp open   mysql      5.7.42 (unauthenticated)`, c: "line-pink" },
-      { t: `[${timestamp}] SCAN       8080/tcp open   http-proxy (misconfigured)`, c: "line-pink" },
-      { t: `[${timestamp}] EXFIL    Extracting fingerprint data...`, c: "line-warning" },
-      { t: `[${timestamp}] EXFIL    Browser: ${navigator.userAgent.slice(0, 60)}`, c: "line-warning" },
-      { t: `[${timestamp}] EXFIL    Screen: ${window.screen.width}x${window.screen.height}`, c: "line-warning" },
-      { t: `[${timestamp}] EXFIL    Platform: ${navigator.platform}`, c: "line-warning" },
-      { t: `[${timestamp}] EXFIL    Language: ${navigator.language}`, c: "line-warning" },
-      { t: `[${timestamp}] EXFIL    Timezone: ${Intl.DateTimeFormat().resolvedOptions().timeZone}`, c: "line-warning" },
-      { t: `[${timestamp}] EXFIL    CPU cores: ${navigator.hardwareConcurrency || "unknown"}`, c: "line-warning" },
-      { t: `[${timestamp}] ACCESS   Establishing reverse tunnel...`, c: "line-error" },
-      { t: `[${timestamp}] ACCESS   Tunnel active on port ${Math.floor(Math.random()*60000)+1024}`, c: "line-error" },
-      { t: `[${timestamp}] ACCESS   Enumerating filesystem...`, c: "line-error" },
-      { t: `[${timestamp}] ACCESS   Credential harvest in progress`, c: "line-error" },
+    addLine("");
+
+    const lines = [
+      `${ts()} [warn]  intrusion attempt logged — input: "${escapeHTML(originalCmd)}"`,
+      `${ts()} [warn]  incident ${incidentId} opened`,
+      `${ts()} [info]  backtrace initiated`,
+      `${ts()} [info]  src ${fakeIp} (${fakeAsn})`,
+      `${ts()} [info]  mac ${fakeMac}`,
+      `${ts()} [info]  rdns ${rdns}`,
+      `${ts()} [info]  portscan ${fakeIp}`,
+      `${ts()} [info]    22/tcp   open  ssh       OpenSSH 8.9p1`,
+      `${ts()} [info]    80/tcp   open  http      nginx/1.18.0`,
+      `${ts()} [info]    3306/tcp open  mysql     MySQL 5.7.42`,
+      `${ts()} [info]    8080/tcp open  http-alt  Jetty 9.4.44`,
+      `${ts()} [info]  fingerprint extraction`,
+      `${ts()} [data]  ua: ${navigator.userAgent}`,
+      `${ts()} [data]  screen: ${window.screen.width}x${window.screen.height}`,
+      `${ts()} [data]  platform: ${navigator.platform}`,
+      `${ts()} [data]  lang: ${navigator.language}`,
+      `${ts()} [data]  tz: ${Intl.DateTimeFormat().resolvedOptions().timeZone}`,
+      `${ts()} [data]  cores: ${navigator.hardwareConcurrency || "unknown"}`,
+      `${ts()} [data]  memory: ${navigator.deviceMemory ? navigator.deviceMemory + "GB" : "unknown"}`,
+      `${ts()} [data]  connection: ${navigator.connection ? navigator.connection.effectiveType : "unknown"}`,
+      `${ts()} [warn]  reverse tunnel established on :${tunnelPort}`,
+      `${ts()} [warn]  filesystem enumeration started`,
+      `${ts()} [warn]  credential harvest in progress`,
+      `${ts()} [err]   session terminated — evidence preserved`,
+      `${ts()} [err]   incident ${incidentId} closed`,
     ];
 
-    for (const { t, c } of steps) {
-      await typeText(t, c, 10);
+    for (const line of lines) {
+      const cls = line.includes("[err]") ? "line-error"
+        : line.includes("[warn]") ? "line-warning"
+        : line.includes("[data]") ? "line-output"
+        : "line-output";
+      addLine(line, cls);
       scrollBottom();
-      await sleep(120);
+      await sleep(80 + Math.random() * 60);
     }
 
-    await sleep(800);
-    glitch();
-    await sleep(200);
-    glitch();
-
     addLine("");
-    addLine("========================================", "line-error");
-    addLine("  COUNTER-INTRUSION COMPLETE", "line-error");
-    addLine("  Session logged. Evidence preserved.", "line-error");
-    addLine("  Incident ID: " + Math.random().toString(36).slice(2, 14).toUpperCase(), "line-error");
-    addLine("========================================", "line-error");
-
-    await sleep(3000);
+    addLine("None of that was real. But your fingerprint above is.", "line-output");
     addLine("");
-    addLine("Relax. None of that was real.", "line-output");
-    addLine("But your browser fingerprint above is.", "line-output");
-    addLine("");
-
-    await sleep(2000);
-    stopMatrix();
-    scanlines.classList.remove("active");
-    terminal.classList.remove("hacker");
   }
 
   // ── rm -rf simulation ───────────────────────────────────
@@ -931,14 +913,36 @@
       konamiBuffer = [];
       addLine("");
       const cat = [
-        "  /\\_/\\  ",
-        " ( o.o ) ",
-        "  > ^ <  ",
+        "                                                .--.              ",
+        "                                               `.  \\             ",
+        "                                                 \\  \\            ",
+        "                                                  .  \\           ",
+        "                                                  :   .          ",
+        "                                                  |    .         ",
+        "                                                  |    :         ",
+        "                                                  |    |         ",
+        "  ..._  ___                                       |    |         ",
+        " `.\"\".`''''\"\"--..___                              |    |         ",
+        " ,-\\  \\             \"\"-...__         _____________/    |         ",
+        " / ` \" '                    `\"\"\"\"\"\"\"\"                  .         ",
+        " \\                                                      L        ",
+        " (>                                                      \\       ",
+        "/                                                         \\      ",
+        "\\_    ___..---.                                            L     ",
+        "  `--'         '.                                           \\    ",
+        "                 .                                           \\_  ",
+        "                _/`.                                           `.._ ",
+        "             .'     -.                                             `.",
+        "            /     __.-Y     /''''''-...___,...--------.._            |",
+        "           /   _.\"    |    /                ' .      \\   '---..._    |",
+        "          /   /      /    /                _,. '    ,/           |   |",
+        "          \\_,'     _.'   /              /''     _,-'            _|   |",
+        "                  '     /               `-----''               /     |",
+        "                  `...-'                                       `...-' ",
       ];
       cat.forEach(l => addLine(l, "line-ascii"));
       addLine("");
-      addLine("KONAMI CODE ACTIVATED.", "line-rainbow");
-      addLine("+30 lives. Not that you needed them.", "line-output");
+      addLine("8 lives remaining.", "line-output");
       addLine("");
       scrollBottom();
       track("easter_egg_triggered", { type: "konami_code" });
