@@ -8,29 +8,24 @@
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
-  <div class="terminal">
+  <canvas id="matrix-canvas"></canvas>
+  <div class="scanlines"></div>
+  <div class="terminal" id="terminal">
     <div class="terminal-header">
       <span class="dot red"></span>
       <span class="dot yellow"></span>
       <span class="dot green"></span>
+      <span class="terminal-title">paul@pcailly: ~</span>
     </div>
-    <div class="terminal-body">
-      <p class="line"><span class="prompt">$</span> whoami</p>
-      <p class="output">Paul Cailly</p>
-      <p class="line"><span class="prompt">$</span> cat links.txt</p>
-      <div class="links">
-        <a href="https://github.com/PaulCailly" target="_blank" rel="noopener">
-          <i class="fab fa-github"></i>
-        </a>
-        <a href="https://linkedin.com/in/paulcailly" target="_blank" rel="noopener">
-          <i class="fab fa-linkedin"></i>
-        </a>
-        <a href="mailto:hello@pcailly.com">
-          <i class="fas fa-envelope"></i>
-        </a>
+    <div class="terminal-body" id="output"></div>
+    <div class="input-line" id="input-line">
+      <span class="prompt-user">paul@pcailly</span><span class="prompt-colon">:</span><span class="prompt-path">~</span><span class="prompt-dollar">$</span>
+      <div class="input-wrapper">
+        <span id="input-display"></span><span class="cursor" id="cursor">_</span>
+        <input type="text" id="command-input" autocomplete="off" autocapitalize="off" spellcheck="false" autofocus>
       </div>
-      <p class="line"><span class="prompt">$</span> <span class="cursor">_</span></p>
     </div>
   </div>
+  <script src="terminal.js"></script>
 </body>
 </html>
