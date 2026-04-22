@@ -880,38 +880,9 @@
   // ── boot sequence ───────────────────────────────────────
 
   async function bootSequence() {
-    const lines = [
-      { text: "BIOS v4.2.0 — pcailly personal terminal", cls: "line-output", delay: 100 },
-      { text: "Checking memory... 640K ought to be enough for anybody", cls: "line-output", delay: 200 },
-      { text: "Loading personality module... [OK]", cls: "line-success", delay: 150 },
-      { text: "Mounting /dev/coffee... [OK]", cls: "line-success", delay: 100 },
-      { text: "Starting vibes daemon... [OK]", cls: "line-success", delay: 150 },
-      { text: "", cls: "line-output", delay: 50 },
-    ];
-
-    for (const l of lines) {
-      const div = document.createElement("div");
-      div.className = `line ${l.cls} boot-line`;
-      div.textContent = l.text;
-      output.appendChild(div);
-      scrollBottom();
-      await sleep(l.delay);
-    }
-
-    ASCII_LOGO.forEach(l => {
-      const div = document.createElement("div");
-      div.className = "line line-ascii boot-line";
-      div.textContent = l;
-      output.appendChild(div);
-    });
-    scrollBottom();
-
-    await sleep(300);
+    addCmd("whoami");
+    addLine("Paul Cailly", "line-output");
     addLine("");
-    addLine('Welcome! Type "help" to see available commands.', "line-info");
-    addLine("");
-
-    // Show links on boot
     commands.links();
     scrollBottom();
     input.focus();
@@ -967,8 +938,11 @@
 
   // ── input handling ──────────────────────────────────────
 
+  const inputHint = document.getElementById("input-hint");
+
   input.addEventListener("input", () => {
     inputDisplay.textContent = input.value;
+    inputHint.classList.toggle("hidden", input.value.length > 0);
   });
 
   input.addEventListener("keydown", async (e) => {
@@ -977,6 +951,7 @@
       const val = input.value;
       input.value = "";
       inputDisplay.textContent = "";
+      inputHint.classList.remove("hidden");
       await processCommand(val);
     } else if (e.key === "ArrowUp") {
       e.preventDefault();

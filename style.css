@@ -183,6 +183,19 @@ body {
   z-index: 2;
 }
 
+.input-hint {
+  position: absolute;
+  left: 0;
+  color: #444;
+  font-size: 14px;
+  pointer-events: none;
+  transition: opacity 0.2s;
+}
+
+.input-hint.hidden {
+  opacity: 0;
+}
+
 #input-display {
   color: #e0e0e0;
   font-size: 14px;
