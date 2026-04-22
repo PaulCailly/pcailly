@@ -7,7 +7,7 @@
 }
 
 body {
-  background: #0a0a0a;
+  background: #1e1f29;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -57,9 +57,9 @@ body {
   opacity: 1;
 }
 
-/* Terminal container */
+/* Terminal container — Dracula */
 .terminal {
-  background: #1a1a2e;
+  background: #282a36;
   border-radius: 8px;
   width: 680px;
   max-width: 94vw;
@@ -69,7 +69,7 @@ body {
   box-shadow:
     0 0 0 1px rgba(255, 255, 255, 0.05),
     0 20px 60px rgba(0, 0, 0, 0.6),
-    0 0 80px rgba(39, 201, 63, 0.03);
+    0 0 80px rgba(189, 147, 249, 0.04);
   overflow: hidden;
   position: relative;
   z-index: 10;
@@ -91,13 +91,13 @@ body {
 
 .terminal.hacker {
   box-shadow:
-    0 0 0 1px rgba(39, 201, 63, 0.3),
+    0 0 0 1px rgba(255, 85, 85, 0.4),
     0 20px 60px rgba(0, 0, 0, 0.6),
-    0 0 120px rgba(39, 201, 63, 0.15);
+    0 0 120px rgba(255, 85, 85, 0.2);
 }
 
 .terminal-header {
-  background: #16213e;
+  background: #21222c;
   padding: 12px 16px;
   display: flex;
   align-items: center;
@@ -112,12 +112,12 @@ body {
   border-radius: 50%;
 }
 
-.dot.red { background: #ff5f56; }
-.dot.yellow { background: #ffbd2e; }
-.dot.green { background: #27c93f; }
+.dot.red { background: #ff5555; }
+.dot.yellow { background: #f1fa8c; }
+.dot.green { background: #50fa7b; }
 
 .terminal-title {
-  color: #666;
+  color: #6272a4;
   font-size: 12px;
   margin-left: 8px;
 }
@@ -129,7 +129,7 @@ body {
   flex: 1;
   min-height: 0;
   scrollbar-width: thin;
-  scrollbar-color: #333 transparent;
+  scrollbar-color: #44475a transparent;
 }
 
 .terminal-body::-webkit-scrollbar {
@@ -141,11 +141,11 @@ body {
 }
 
 .terminal-body::-webkit-scrollbar-thumb {
-  background: #333;
+  background: #44475a;
   border-radius: 3px;
 }
 
-/* Input line (fixed at bottom) */
+/* Input line (fixed at bottom) — zsh style */
 .input-line {
   display: flex;
   align-items: center;
@@ -155,10 +155,9 @@ body {
   gap: 0;
 }
 
-.prompt-user { color: #27c93f; }
-.prompt-colon { color: #a0a0a0; }
-.prompt-path { color: #5b86e5; }
-.prompt-dollar { color: #a0a0a0; margin: 0 8px 0 2px; }
+.prompt-arrow { color: #50fa7b; margin-right: 6px; font-weight: bold; }
+.prompt-dir { color: #8be9fd; font-weight: bold; margin-right: 6px; }
+.prompt-git { color: #ff79c6; margin-right: 8px; }
 
 .input-wrapper {
   flex: 1;
@@ -186,7 +185,7 @@ body {
 .input-hint {
   position: absolute;
   left: 0;
-  color: #444;
+  color: #44475a;
   font-size: 14px;
   pointer-events: none;
   transition: opacity 0.2s;
@@ -197,14 +196,14 @@ body {
 }
 
 #input-display {
-  color: #e0e0e0;
+  color: #f8f8f2;
   font-size: 14px;
   white-space: pre;
   pointer-events: none;
 }
 
 .cursor {
-  color: #27c93f;
+  color: #f8f8f2;
   animation: blink 1s step-end infinite;
   pointer-events: none;
 }
@@ -213,7 +212,7 @@ body {
   50% { opacity: 0; }
 }
 
-/* Output lines */
+/* Output lines — Dracula palette */
 .line {
   font-size: 14px;
   line-height: 1.6;
@@ -222,40 +221,55 @@ body {
 }
 
 .line-cmd {
-  color: #a0a0a0;
+  color: #6272a4;
 }
 
 .line-cmd .cmd-text {
-  color: #e0e0e0;
+  color: #f8f8f2;
 }
 
 .line-output {
-  color: #c0c0c0;
+  color: #f8f8f2;
   padding-left: 4px;
 }
 
 .line-error {
-  color: #ff5f56;
+  color: #ff5555;
   padding-left: 4px;
 }
 
 .line-success {
-  color: #27c93f;
+  color: #50fa7b;
   padding-left: 4px;
 }
 
 .line-info {
-  color: #5b86e5;
+  color: #bd93f9;
   padding-left: 4px;
 }
 
 .line-warning {
-  color: #ffbd2e;
+  color: #f1fa8c;
+  padding-left: 4px;
+}
+
+.line-cyan {
+  color: #8be9fd;
+  padding-left: 4px;
+}
+
+.line-pink {
+  color: #ff79c6;
+  padding-left: 4px;
+}
+
+.line-orange {
+  color: #ffb86c;
   padding-left: 4px;
 }
 
 .line-ascii {
-  color: #27c93f;
+  color: #bd93f9;
   line-height: 1.15;
   font-size: 12px;
 }
@@ -266,13 +280,13 @@ body {
 }
 
 @keyframes rainbow {
-  0% { color: #ff0000; }
-  17% { color: #ff8800; }
-  33% { color: #ffff00; }
-  50% { color: #00ff00; }
-  67% { color: #0088ff; }
-  83% { color: #8800ff; }
-  100% { color: #ff0000; }
+  0% { color: #ff5555; }
+  17% { color: #ffb86c; }
+  33% { color: #f1fa8c; }
+  50% { color: #50fa7b; }
+  67% { color: #8be9fd; }
+  83% { color: #bd93f9; }
+  100% { color: #ff79c6; }
 }
 
 /* Links in output */
@@ -283,7 +297,7 @@ body {
 }
 
 .output-links a {
-  color: #a0a0a0;
+  color: #6272a4;
   font-size: 18px;
   text-decoration: none;
   transition: color 0.2s, transform 0.2s, text-shadow 0.2s;
@@ -293,9 +307,9 @@ body {
 }
 
 .output-links a:hover {
-  color: #27c93f;
+  color: #bd93f9;
   transform: translateY(-1px);
-  text-shadow: 0 0 10px rgba(39, 201, 63, 0.4);
+  text-shadow: 0 0 10px rgba(189, 147, 249, 0.4);
 }
 
 .output-links .link-label {
@@ -313,8 +327,8 @@ body {
   display: inline-block;
   width: 200px;
   height: 14px;
-  background: #111;
-  border: 1px solid #333;
+  background: #21222c;
+  border: 1px solid #44475a;
   border-radius: 2px;
   overflow: hidden;
   vertical-align: middle;
@@ -322,13 +336,13 @@ body {
 
 .progress-fill {
   height: 100%;
-  background: #27c93f;
+  background: #50fa7b;
   width: 0%;
   transition: width 0.1s linear;
 }
 
 .progress-fill.danger {
-  background: #ff5f56;
+  background: #ff5555;
 }
 
 /* Fireworks */
@@ -362,11 +376,11 @@ body {
 }
 
 @keyframes party-bg {
-  0% { background: #0a0a0a; }
-  25% { background: #1a0a2e; }
-  50% { background: #0a1a2e; }
-  75% { background: #2e1a0a; }
-  100% { background: #0a0a0a; }
+  0% { background: #1e1f29; }
+  25% { background: #2a1e29; }
+  50% { background: #1e2a29; }
+  75% { background: #29251e; }
+  100% { background: #1e1f29; }
 }
 
 /* Boot sequence fade in */

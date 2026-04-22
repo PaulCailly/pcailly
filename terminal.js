@@ -12,10 +12,12 @@
   let matrixRunning = false;
   let konamiBuffer = [];
   let commandCount = 0;
-  let hackerMode = false;
   let partyMode = false;
 
   const KONAMI = ["ArrowUp","ArrowUp","ArrowDown","ArrowDown","ArrowLeft","ArrowRight","ArrowLeft","ArrowRight","b","a"];
+
+  // regex to catch any hack-related command
+  const HACK_RE = /\b(hack|hacking|exploit|breach|pentest|nmap|metasploit|sqlinjection|sqli|xss|bruteforce|brute.?force|ddos|payload|shellcode|rootkit|trojan|phishing|keylog|wireshark|burpsuite|hydra|john|hashcat|aircrack|nikto|gobuster|dirbuster|reverse.?shell|backdoor|pwn|0day|zero.?day|inject|overflow|crack|sniff)\b/i;
 
   // ── helpers ──────────────────────────────────────────────
 
@@ -35,7 +37,7 @@
 
   function addCmd(text) {
     addHTML(
-      `<span class="prompt-user">paul@pcailly</span><span class="prompt-colon">:</span><span class="prompt-path">~</span><span class="prompt-dollar">$</span> <span class="cmd-text">${escapeHTML(text)}</span>`,
+      `<span class="prompt-arrow">➜</span> <span class="prompt-dir">~/pcailly</span> <span class="prompt-git">git:(main)</span> <span class="cmd-text">${escapeHTML(text)}</span>`,
       "line-cmd"
     );
   }
@@ -62,12 +64,6 @@
       await sleep(speed);
     }
     return div;
-  }
-
-  async function typeLines(lines, cls = "line-output", speed = 25) {
-    for (const line of lines) {
-      await typeText(line, cls, speed);
-    }
   }
 
   function glitch() {
@@ -112,7 +108,7 @@
       if (!matrixRunning) return;
       ctx.fillStyle = "rgba(0, 0, 0, 0.05)";
       ctx.fillRect(0, 0, canvas.width, canvas.height);
-      ctx.fillStyle = "#0f0";
+      ctx.fillStyle = "#50fa7b";
       ctx.font = "14px Fira Code, monospace";
       for (let i = 0; i < drops.length; i++) {
         const ch = chars[Math.floor(Math.random() * chars.length)];
@@ -132,15 +128,6 @@
   }
 
   // ── ascii art ────────────────────────────────────────────
-
-  const ASCII_LOGO = [
-    "                 _ _               _ _ _       ",
-    " _ __   ___ __ _(_) | |_   _   ___| (_) |_   _ ",
-    "| '_ \\ / __/ _` | | | | | | | / __| | | __| (_)",
-    "| |_) | (_| (_| | | | | |_| || (__| | | |_   _ ",
-    "| .__/ \\___\\__,_|_|_|_|\\__, (_)___|_|_|\\__| (_)",
-    "|_|                    |___/                    ",
-  ];
 
   const ASCII_COFFEE = [
     "        ( (  ",
@@ -191,85 +178,69 @@
     "\"rm -rf / — the solution to all your problems and all your files.\"",
   ];
 
-  // ── neofetch ─────────────────────────────────────────────
+  // ── reverse hack simulation ─────────────────────────────
 
-  function neofetch() {
-    const info = [
-      ["OS", "Human OS 1.0 (Homo sapiens)"],
-      ["Host", "pcailly.com"],
-      ["Location", "Paris, France"],
-      ["Company", "Deezer"],
-      ["Shell", "zsh"],
-      ["Terminal", "pcailly-term v1.0"],
-      ["Resolution", `${window.innerWidth}x${window.innerHeight}`],
-      ["Languages", "TypeScript, JavaScript, Python"],
-      ["Repos", "31 public"],
-    ];
-
-    const art = [
-      "   ____            _  ",
-      "  |  _ \\ __ _ _  _| | ",
-      "  | |_) / _` | | | | | ",
-      "  |  __/ (_| | |_| | | ",
-      "  |_|   \\__,_|\\__,_|_| ",
-      "                       ",
-    ];
-
-    for (let i = 0; i < Math.max(art.length, info.length); i++) {
-      const artLine = (art[i] || "").padEnd(28);
-      if (i < info.length) {
-        addHTML(
-          `<span style="color:#27c93f">${escapeHTML(artLine)}</span><span style="color:#5b86e5;font-weight:bold">${escapeHTML(info[i][0])}</span><span style="color:#a0a0a0">: ${escapeHTML(info[i][1])}</span>`,
-          "line-output"
-        );
-      } else {
-        addHTML(`<span style="color:#27c93f">${escapeHTML(artLine)}</span>`, "line-output");
-      }
-    }
-
-    // Color palette
-    const colors = ["#1a1a2e","#ff5f56","#27c93f","#ffbd2e","#5b86e5","#c678dd","#56b6c2","#e0e0e0"];
-    let palette = "                            ";
-    colors.forEach(c => palette += `<span style="background:${c};color:${c}">███</span>`);
-    addHTML(palette, "line-output");
-  }
-
-
-  // ── hack animation ──────────────────────────────────────
-
-  async function hackSequence() {
-    const targets = [
-      "Initializing breach protocol...",
-      "Scanning ports... 22, 80, 443, 8080, 31337",
-      "Bypassing firewall ██████████ [OK]",
-      "Injecting payload... ████████ [OK]",
-      "Decrypting mainframe... ██████ [OK]",
-      "Accessing root... ",
-    ];
-
-    hackerMode = true;
+  async function reverseHack(originalCmd) {
     terminal.classList.add("hacker");
     scanlines.classList.add("active");
+
+    addLine("");
+    await typeText("⚠ INTRUSION DETECTED", "line-error", 25);
+    await sleep(400);
+    await typeText("Initiating counter-measures...", "line-warning", 20);
+    await sleep(300);
+
     startMatrix();
 
-    for (const line of targets) {
-      await typeText(line, "line-success", 20);
-      await sleep(300);
+    const fakeIp = `${Math.floor(Math.random()*223)+1}.${Math.floor(Math.random()*255)}.${Math.floor(Math.random()*255)}.${Math.floor(Math.random()*255)}`;
+    const fakeMac = Array.from({length:6}, () => Math.floor(Math.random()*256).toString(16).padStart(2,"0")).join(":");
+
+    const steps = [
+      `[TRACE] Source IP identified: ${fakeIp}`,
+      `[TRACE] MAC address: ${fakeMac}`,
+      `[TRACE] Reverse DNS lookup... ${["sketchy-laptop.home","definitely-not-a-hacker.local","moms-basement.lan","script-kiddie-pc.net"][Math.floor(Math.random()*4)]}`,
+      `[SCAN] Opening ports on attacker machine...`,
+      `[SCAN]   22/tcp   open   ssh (weak password detected: "password123")`,
+      `[SCAN]   3306/tcp open   mysql (no auth lmao)`,
+      `[SCAN]   8080/tcp open   http (running WordPress 2.0)`,
+      `[EXFIL] Downloading attacker's browser history...`,
+      `[EXFIL]   "how to hack a website"`,
+      `[EXFIL]   "is hacking illegal"`,
+      `[EXFIL]   "free robux generator"`,
+      `[EXFIL]   "how to delete search history"`,
+      `[ACCESS] Webcam activated... 📸`,
+      `[ACCESS] Screenshot saved to /evidence/`,
+      `[GEO] Location: probably a bedroom`,
+    ];
+
+    for (const step of steps) {
+      const cls = step.startsWith("[TRACE]") ? "line-cyan"
+        : step.startsWith("[SCAN]") ? "line-pink"
+        : step.startsWith("[EXFIL]") ? "line-warning"
+        : step.startsWith("[ACCESS]") ? "line-error"
+        : "line-orange";
+      await typeText(step, cls, 15);
+      scrollBottom();
+      await sleep(150);
     }
 
     await sleep(500);
     glitch();
+    glitch();
     addLine("");
-    addLine("ACCESS GRANTED", "line-success");
-    addLine("Welcome back, Paul.", "line-success");
+    addLine("╔══════════════════════════════════════════╗", "line-error");
+    addLine("║  REVERSE HACK COMPLETE                   ║", "line-error");
+    addLine("║  All your files are belong to us.         ║", "line-error");
+    addLine("╚══════════════════════════════════════════╝", "line-error");
     addLine("");
-    addLine("Just kidding. This is a website. 😄", "line-warning");
+    await sleep(1500);
+    addLine("Just kidding. But maybe don't try that again. 😏", "line-output");
+    addLine("");
 
-    await sleep(3000);
+    await sleep(2000);
     stopMatrix();
     scanlines.classList.remove("active");
     terminal.classList.remove("hacker");
-    hackerMode = false;
   }
 
   // ── rm -rf simulation ───────────────────────────────────
@@ -280,16 +251,16 @@
 
     const files = [
       "/usr/bin/life-choices.exe",
-      "/home/paul/embarrassing-photos/",
+      "/home/root/embarrassing-photos/",
       "/var/log/all-my-mistakes.log",
       "/etc/hopes-and-dreams.conf",
-      "/home/paul/side-projects/definitely-finishing-this-one/",
-      "/home/paul/.browser-history  (oh no)",
+      "/home/root/side-projects/definitely-finishing-this-one/",
+      "/home/root/.browser-history  (oh no)",
       "/usr/lib/self-esteem.so",
       "/boot/motivation.img",
-      "/home/paul/Desktop/New Folder (37)/",
+      "/home/root/Desktop/New Folder (37)/",
       "/dev/social-life",
-      "/home/paul/node_modules/ (this will take a while)",
+      "/home/root/node_modules/ (this will take a while)",
     ];
 
     addLine("☠️  Are you insane?! Fine, here goes...", "line-error");
@@ -330,24 +301,22 @@
   // ── sl (steam locomotive) ───────────────────────────────
 
   async function sl() {
-    const frames = [
-      [
-        "      ====        ________                ___________ ",
-        "  _D _|  |_______/        \\__I_I_____===__|_________| ",
-        "   |(_)---  |   H\\________/ |   |        =|___ ___|  ",
-        "   /     |  |   H  |  |     |   |         ||_| |_||  ",
-        "  |      |  |   H  |__--------------------| [___] |  ",
-        "  | ________|___H__/__|_____/[][]~\\_______|       |  ",
-        "  |/ |   |-----------I_____I [][] []  D   |=======|_ ",
-        "__/ =| o |=-~~\\  /~~\\  /~~\\  /~~\\ ____Y___________|__ ",
-        " |/-=|___|=    ||    ||    ||    |_____/~\\___/        ",
-        "  \\_/      \\O=====O=====O=====O_/      \\_/            ",
-      ],
+    const train = [
+      "      ====        ________                ___________ ",
+      "  _D _|  |_______/        \\__I_I_____===__|_________| ",
+      "   |(_)---  |   H\\________/ |   |        =|___ ___|  ",
+      "   /     |  |   H  |  |     |   |         ||_| |_||  ",
+      "  |      |  |   H  |__--------------------| [___] |  ",
+      "  | ________|___H__/__|_____/[][]~\\_______|       |  ",
+      "  |/ |   |-----------I_____I [][] []  D   |=======|_ ",
+      "__/ =| o |=-~~\\  /~~\\  /~~\\  /~~\\ ____Y___________|__ ",
+      " |/-=|___|=    ||    ||    ||    |_____/~\\___/        ",
+      "  \\_/      \\O=====O=====O=====O_/      \\_/            ",
     ];
 
     addLine("You typed 'sl' instead of 'ls'. Classic.", "line-warning");
     addLine("");
-    frames[0].forEach(l => addLine(l, "line-ascii"));
+    train.forEach(l => addLine(l, "line-ascii"));
     addLine("");
     addLine("🚂 choo choo!", "line-output");
   }
@@ -373,43 +342,6 @@
     return div;
   }
 
-  // ── sudo ────────────────────────────────────────────────
-
-  function sudo(args) {
-    const responses = [
-      "Nice try. You're not root here. 🔒",
-      "sudo: paul is not in the sudoers file. This incident will be reported.",
-      "I'm a website, not a Linux box. But I appreciate the effort.",
-      "Permission denied. Have you tried 'please' instead?",
-      "🚨 UNAUTHORIZED ACCESS ATTEMPT LOGGED 🚨\n   (just kidding, logs don't exist here)",
-    ];
-    addLine(responses[Math.floor(Math.random() * responses.length)], "line-error");
-  }
-
-  // ── please ──────────────────────────────────────────────
-
-  function please() {
-    addLine("Since you asked nicely... ✨", "line-success");
-    addLine("Here, have a cookie: 🍪", "line-output");
-  }
-
-  // ── weather ─────────────────────────────────────────────
-
-  function weather() {
-    const conditions = [
-      { icon: "☀️", text: "Sunny, 24°C — Perfect coding weather" },
-      { icon: "🌧️", text: "Rainy, 14°C — Stay inside and ship code" },
-      { icon: "⛈️", text: "Thunderstorm — Your deployment, probably" },
-      { icon: "🌤️", text: "Partly cloudy, 19°C — Nice day to push to prod" },
-      { icon: "❄️", text: "Snowing, -2°C — Like your test coverage" },
-    ];
-    const c = conditions[Math.floor(Math.random() * conditions.length)];
-    addLine("");
-    addLine(`  ${c.icon}  ${c.text}`, "line-output");
-    addLine("  Location: The Internet", "line-output");
-    addLine("");
-  }
-
   // ── commands map ────────────────────────────────────────
 
   const commands = {
@@ -422,12 +354,11 @@
         ["skills", "Tech stack"],
         ["projects", "What I build"],
         ["contact", "Get in touch"],
-        ["neofetch", "System info"],
         ["clear", "Clear"],
       ];
       cmds.forEach(([cmd, desc]) => {
         addHTML(
-          `  <span style="color:#27c93f;min-width:140px;display:inline-block">${escapeHTML(cmd.padEnd(14))}</span><span style="color:#a0a0a0">${escapeHTML(desc)}</span>`,
+          `  <span style="color:#50fa7b;min-width:140px;display:inline-block">${escapeHTML(cmd.padEnd(14))}</span><span style="color:#6272a4">${escapeHTML(desc)}</span>`,
           "line-output"
         );
       });
@@ -435,7 +366,7 @@
     },
 
     whoami() {
-      addLine("Paul Cailly", "line-output");
+      addLine("root", "line-output");
     },
 
     about() {
@@ -472,9 +403,9 @@
 
     projects() {
       addLine("");
-      addHTML('  <a href="https://github.com/PaulCailly/hermes-deploy" target="_blank" style="color:#5b86e5;text-decoration:none">hermes-deploy</a><span style="color:#a0a0a0">  Deploy hermes-agent to AWS/GCP</span>', "line-output");
-      addHTML('  <a href="https://github.com/PaulCailly/deezer-mcp" target="_blank" style="color:#5b86e5;text-decoration:none">deezer-mcp</a><span style="color:#a0a0a0">      MCP server for Deezer</span>', "line-output");
-      addHTML('  <a href="https://github.com/PaulCailly" target="_blank" style="color:#5b86e5;text-decoration:none">→ all repos</a>', "line-output");
+      addHTML('  <a href="https://github.com/PaulCailly/hermes-deploy" target="_blank" style="color:#8be9fd;text-decoration:none">hermes-deploy</a><span style="color:#6272a4">  Deploy hermes-agent to AWS/GCP</span>', "line-output");
+      addHTML('  <a href="https://github.com/PaulCailly/deezer-mcp" target="_blank" style="color:#8be9fd;text-decoration:none">deezer-mcp</a><span style="color:#6272a4">      MCP server for Deezer</span>', "line-output");
+      addHTML('  <a href="https://github.com/PaulCailly" target="_blank" style="color:#8be9fd;text-decoration:none">→ all repos</a>', "line-output");
       addLine("");
     },
 
@@ -509,8 +440,6 @@
       addLine(FORTUNES[Math.floor(Math.random() * FORTUNES.length)], "line-info");
       addLine("");
     },
-
-    neofetch,
 
     coffee() {
       addLine("");
@@ -573,7 +502,7 @@
     },
 
     pwd() {
-      addLine("/home/paul", "line-output");
+      addLine("/root/pcailly", "line-output");
     },
 
     cd(args) {
@@ -594,14 +523,31 @@
       addLine(`Creating '${args || "unnamed"}'... just kidding, this is read-only.`, "line-warning");
     },
 
-    sudo,
-    please,
-    weather,
-    cowsay,
-
-    async hack() {
-      await hackSequence();
+    sudo(args) {
+      addLine("You're already root. 👑", "line-success");
     },
+
+    please() {
+      addLine("Since you asked nicely... ✨", "line-success");
+      addLine("Here, have a cookie: 🍪", "line-output");
+    },
+
+    weather() {
+      const conditions = [
+        { icon: "☀️", text: "Sunny, 24°C — Perfect coding weather" },
+        { icon: "🌧️", text: "Rainy, 14°C — Stay inside and ship code" },
+        { icon: "⛈️", text: "Thunderstorm — Your deployment, probably" },
+        { icon: "🌤️", text: "Partly cloudy, 19°C — Nice day to push to prod" },
+        { icon: "❄️", text: "Snowing, -2°C — Like your test coverage" },
+      ];
+      const c = conditions[Math.floor(Math.random() * conditions.length)];
+      addLine("");
+      addLine(`  ${c.icon}  ${c.text}`, "line-output");
+      addLine("  Location: The Internet", "line-output");
+      addLine("");
+    },
+
+    cowsay,
 
     async "rm"(args) {
       if (args && args.includes("-rf")) {
@@ -738,10 +684,6 @@
       addLine("");
     },
 
-    async sudo_rm_rf() {
-      await rmrf();
-    },
-
     async scan() {
       addLine("");
       addLine("Scanning visitor...", "line-info");
@@ -795,12 +737,6 @@
       stopMatrix();
     },
 
-    ascii() {
-      addLine("");
-      ASCII_LOGO.forEach(l => addLine(l, "line-ascii"));
-      addLine("");
-    },
-
     skull() {
       addLine("");
       ASCII_SKULL.forEach(l => addLine(l, "line-ascii"));
@@ -819,11 +755,11 @@
 
     top() {
       addLine("PID   USER     CPU%  MEM%  COMMAND", "line-info");
-      addLine("1     paul     420%  69%   overthinking", "line-output");
-      addLine("2     paul     100%  50%   coding", "line-output");
-      addLine("3     paul     80%   30%   coffee-daemon", "line-output");
-      addLine("4     paul     60%   20%   procrastinating", "line-output");
-      addLine("5     paul     40%   10%   existential-dread", "line-output");
+      addLine("1     root     420%  69%   overthinking", "line-output");
+      addLine("2     root     100%  50%   coding", "line-output");
+      addLine("3     root     80%   30%   coffee-daemon", "line-output");
+      addLine("4     root     60%   20%   procrastinating", "line-output");
+      addLine("5     root     40%   10%   existential-dread", "line-output");
     },
 
     uptime() {
@@ -831,10 +767,6 @@
       const now = new Date();
       const days = Math.floor((now - start) / (1000 * 60 * 60 * 24));
       addLine(`up ${days} days, load average: too damn high`, "line-output");
-    },
-
-    whoisthere() {
-      addLine("Just you and the blinking cursor. 👀", "line-output");
     },
 
     async thanos() {
@@ -877,10 +809,16 @@
     const parts = trimmed.split(/\s+/);
     const cmd = parts[0].toLowerCase();
     const args = parts.slice(1).join(" ");
-
-    // Check for full-string matches first (e.g., "rm -rf /", "wake up")
     const fullLower = trimmed.toLowerCase();
 
+    // Hack regex — catch anything suspicious and reverse-hack them
+    if (HACK_RE.test(fullLower)) {
+      await reverseHack(trimmed);
+      scrollBottom();
+      return;
+    }
+
+    // Full-string matches
     if (fullLower === "rm -rf /" || fullLower === "rm -rf /*" || fullLower.startsWith("rm -rf")) {
       await commands["rm"](trimmed.slice(3));
     } else if (fullLower === "wake up" || fullLower === "wake up neo") {
@@ -892,7 +830,7 @@
     } else if (commands[cmd]) {
       await commands[cmd](args);
     } else if (cmd === "sudo" && args) {
-      sudo(args);
+      commands.sudo(args);
     } else if (fullLower === "make me a sandwich") {
       addLine("What? Make it yourself.", "line-error");
     } else if (fullLower === "sudo make me a sandwich") {
