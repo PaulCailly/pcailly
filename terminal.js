@@ -357,7 +357,6 @@
     help() {
       addLine("");
       const cmds = [
-        ["whoami", "Who am I?"],
         ["about", "Learn more"],
         ["links", "Socials"],
         ["skills", "Tech stack"],
