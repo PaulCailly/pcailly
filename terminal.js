@@ -77,7 +77,7 @@
   }
 
   function fireworks(count = 12) {
-    const emojis = ["🎆","🎇","✨","🎉","🎊","💥","⭐","🌟"];
+    const emojis = ["*","**","+","x","#","~","^","!"];
     for (let i = 0; i < count; i++) {
       setTimeout(() => {
         const el = document.createElement("div");
@@ -113,8 +113,8 @@
       for (let i = 0; i < drops.length; i++) {
         const ch = chars[Math.floor(Math.random() * chars.length)];
         ctx.fillText(ch, i * 16, drops[i] * 16);
-        if (drops[i] * 16 > canvas.height && Math.random() > 0.975) drops[i] = 0;
-        drops[i]++;
+        if (drops[i] * 16 > canvas.height && Math.random() > 0.99) drops[i] = 0;
+        drops[i] += 0.4;
       }
       requestAnimationFrame(draw);
     }
@@ -185,56 +185,65 @@
     scanlines.classList.add("active");
 
     addLine("");
-    await typeText("⚠ INTRUSION DETECTED", "line-error", 25);
+    await typeText("[ALERT] Unauthorized access attempt detected.", "line-error", 20);
+    await sleep(600);
+    await typeText("[ALERT] Activating defensive countermeasures.", "line-error", 20);
     await sleep(400);
-    await typeText("Initiating counter-measures...", "line-warning", 20);
-    await sleep(300);
 
     startMatrix();
+    await sleep(300);
 
     const fakeIp = `${Math.floor(Math.random()*223)+1}.${Math.floor(Math.random()*255)}.${Math.floor(Math.random()*255)}.${Math.floor(Math.random()*255)}`;
     const fakeMac = Array.from({length:6}, () => Math.floor(Math.random()*256).toString(16).padStart(2,"0")).join(":");
+    const fakeAsn = `AS${Math.floor(Math.random()*60000)+1000}`;
+    const timestamp = new Date().toISOString();
 
     const steps = [
-      `[TRACE] Source IP identified: ${fakeIp}`,
-      `[TRACE] MAC address: ${fakeMac}`,
-      `[TRACE] Reverse DNS lookup... ${["sketchy-laptop.home","definitely-not-a-hacker.local","moms-basement.lan","script-kiddie-pc.net"][Math.floor(Math.random()*4)]}`,
-      `[SCAN] Opening ports on attacker machine...`,
-      `[SCAN]   22/tcp   open   ssh (weak password detected: "password123")`,
-      `[SCAN]   3306/tcp open   mysql (no auth lmao)`,
-      `[SCAN]   8080/tcp open   http (running WordPress 2.0)`,
-      `[EXFIL] Downloading attacker's browser history...`,
-      `[EXFIL]   "how to hack a website"`,
-      `[EXFIL]   "is hacking illegal"`,
-      `[EXFIL]   "free robux generator"`,
-      `[EXFIL]   "how to delete search history"`,
-      `[ACCESS] Webcam activated... 📸`,
-      `[ACCESS] Screenshot saved to /evidence/`,
-      `[GEO] Location: probably a bedroom`,
+      { t: `[${timestamp}] TRACE    Backtrace initiated on inbound connection`, c: "line-cyan" },
+      { t: `[${timestamp}] TRACE    Source: ${fakeIp}`, c: "line-cyan" },
+      { t: `[${timestamp}] TRACE    MAC: ${fakeMac}`, c: "line-cyan" },
+      { t: `[${timestamp}] TRACE    ASN: ${fakeAsn}`, c: "line-cyan" },
+      { t: `[${timestamp}] TRACE    Reverse DNS: ${["corp-workstation.internal","dev-machine.home.arpa","unknown-host.residential.isp"][Math.floor(Math.random()*3)]}`, c: "line-cyan" },
+      { t: `[${timestamp}] SCAN     Port scan on origin host...`, c: "line-pink" },
+      { t: `[${timestamp}] SCAN       22/tcp   open   ssh        OpenSSH 8.9`, c: "line-pink" },
+      { t: `[${timestamp}] SCAN       80/tcp   open   http       nginx/1.18`, c: "line-pink" },
+      { t: `[${timestamp}] SCAN       3306/tcp open   mysql      5.7.42 (unauthenticated)`, c: "line-pink" },
+      { t: `[${timestamp}] SCAN       8080/tcp open   http-proxy (misconfigured)`, c: "line-pink" },
+      { t: `[${timestamp}] EXFIL    Extracting fingerprint data...`, c: "line-warning" },
+      { t: `[${timestamp}] EXFIL    Browser: ${navigator.userAgent.slice(0, 60)}`, c: "line-warning" },
+      { t: `[${timestamp}] EXFIL    Screen: ${window.screen.width}x${window.screen.height}`, c: "line-warning" },
+      { t: `[${timestamp}] EXFIL    Platform: ${navigator.platform}`, c: "line-warning" },
+      { t: `[${timestamp}] EXFIL    Language: ${navigator.language}`, c: "line-warning" },
+      { t: `[${timestamp}] EXFIL    Timezone: ${Intl.DateTimeFormat().resolvedOptions().timeZone}`, c: "line-warning" },
+      { t: `[${timestamp}] EXFIL    CPU cores: ${navigator.hardwareConcurrency || "unknown"}`, c: "line-warning" },
+      { t: `[${timestamp}] ACCESS   Establishing reverse tunnel...`, c: "line-error" },
+      { t: `[${timestamp}] ACCESS   Tunnel active on port ${Math.floor(Math.random()*60000)+1024}`, c: "line-error" },
+      { t: `[${timestamp}] ACCESS   Enumerating filesystem...`, c: "line-error" },
+      { t: `[${timestamp}] ACCESS   Credential harvest in progress`, c: "line-error" },
     ];
 
-    for (const step of steps) {
-      const cls = step.startsWith("[TRACE]") ? "line-cyan"
-        : step.startsWith("[SCAN]") ? "line-pink"
-        : step.startsWith("[EXFIL]") ? "line-warning"
-        : step.startsWith("[ACCESS]") ? "line-error"
-        : "line-orange";
-      await typeText(step, cls, 15);
+    for (const { t, c } of steps) {
+      await typeText(t, c, 10);
       scrollBottom();
-      await sleep(150);
+      await sleep(120);
     }
 
-    await sleep(500);
+    await sleep(800);
     glitch();
+    await sleep(200);
     glitch();
+
     addLine("");
-    addLine("╔══════════════════════════════════════════╗", "line-error");
-    addLine("║  REVERSE HACK COMPLETE                   ║", "line-error");
-    addLine("║  All your files are belong to us.         ║", "line-error");
-    addLine("╚══════════════════════════════════════════╝", "line-error");
+    addLine("========================================", "line-error");
+    addLine("  COUNTER-INTRUSION COMPLETE", "line-error");
+    addLine("  Session logged. Evidence preserved.", "line-error");
+    addLine("  Incident ID: " + Math.random().toString(36).slice(2, 14).toUpperCase(), "line-error");
+    addLine("========================================", "line-error");
+
+    await sleep(3000);
     addLine("");
-    await sleep(1500);
-    addLine("Just kidding. But maybe don't try that again. 😏", "line-output");
+    addLine("Relax. None of that was real.", "line-output");
+    addLine("But your browser fingerprint above is.", "line-output");
     addLine("");
 
     await sleep(2000);
@@ -263,7 +272,7 @@
       "/home/root/node_modules/ (this will take a while)",
     ];
 
-    addLine("☠️  Are you insane?! Fine, here goes...", "line-error");
+    addLine("Are you insane? Fine, here goes...", "line-error");
     addLine("");
 
     for (const f of files) {
@@ -276,7 +285,7 @@
     glitch();
     glitch();
     addLine("");
-    addLine("💀 System destroyed. Just kidding, it's a website.", "line-warning");
+    addLine("System destroyed. Just kidding, it's a website.", "line-warning");
     addLine("   But seriously, don't run that on a real machine.", "line-output");
   }
 
@@ -318,7 +327,7 @@
     addLine("");
     train.forEach(l => addLine(l, "line-ascii"));
     addLine("");
-    addLine("🚂 choo choo!", "line-output");
+    addLine("choo choo.", "line-output");
   }
 
   // ── progress bar ────────────────────────────────────────
@@ -352,7 +361,6 @@
         ["about", "Learn more"],
         ["links", "Socials"],
         ["skills", "Tech stack"],
-        ["projects", "What I build"],
         ["contact", "Get in touch"],
         ["clear", "Clear"],
       ];
@@ -401,14 +409,6 @@
       addLine("");
     },
 
-    projects() {
-      addLine("");
-      addHTML('  <a href="https://github.com/PaulCailly/hermes-deploy" target="_blank" style="color:#8be9fd;text-decoration:none">hermes-deploy</a><span style="color:#6272a4">  Deploy hermes-agent to AWS/GCP</span>', "line-output");
-      addHTML('  <a href="https://github.com/PaulCailly/deezer-mcp" target="_blank" style="color:#8be9fd;text-decoration:none">deezer-mcp</a><span style="color:#6272a4">      MCP server for Deezer</span>', "line-output");
-      addHTML('  <a href="https://github.com/PaulCailly" target="_blank" style="color:#8be9fd;text-decoration:none">→ all repos</a>', "line-output");
-      addLine("");
-    },
-
     contact() {
       addLine("");
       addLine("hello@pcailly.com", "line-output");
@@ -445,7 +445,7 @@
       addLine("");
       ASCII_COFFEE.forEach(l => addLine(l, "line-ascii"));
       addLine("");
-      addLine("  Here's your coffee ☕", "line-output");
+      addLine("  Here's your coffee.", "line-output");
       addLine("  Now get back to work.", "line-warning");
       addLine("");
     },
@@ -480,7 +480,7 @@
         },
         ".secret": () => {
           addLine("");
-          addLine("🤫 You found the secret file!", "line-warning");
+          addLine("You found the secret file.", "line-warning");
           addLine("Here's a secret: I once mass-deployed on a Friday.", "line-error");
           addLine("It went fine. I got lucky.", "line-output");
           addLine("");
@@ -507,7 +507,7 @@
 
     cd(args) {
       if (!args || args === "~") {
-        addLine("Already home. 🏠", "line-output");
+        addLine("Already home.", "line-output");
       } else if (args === "..") {
         addLine("Nice try. You can't escape.", "line-warning");
       } else {
@@ -524,21 +524,21 @@
     },
 
     sudo(args) {
-      addLine("You're already root. 👑", "line-success");
+      addLine("You're already root.", "line-success");
     },
 
     please() {
-      addLine("Since you asked nicely... ✨", "line-success");
-      addLine("Here, have a cookie: 🍪", "line-output");
+      addLine("Since you asked nicely...", "line-success");
+      addLine("Here, have a cookie.", "line-output");
     },
 
     weather() {
       const conditions = [
-        { icon: "☀️", text: "Sunny, 24°C — Perfect coding weather" },
-        { icon: "🌧️", text: "Rainy, 14°C — Stay inside and ship code" },
-        { icon: "⛈️", text: "Thunderstorm — Your deployment, probably" },
-        { icon: "🌤️", text: "Partly cloudy, 19°C — Nice day to push to prod" },
-        { icon: "❄️", text: "Snowing, -2°C — Like your test coverage" },
+        { icon: "[sun]", text: "Sunny, 24C — Perfect coding weather" },
+        { icon: "[rain]", text: "Rainy, 14C — Stay inside and ship code" },
+        { icon: "[storm]", text: "Thunderstorm — Your deployment, probably" },
+        { icon: "[cloud]", text: "Partly cloudy, 19C — Nice day to push to prod" },
+        { icon: "[snow]", text: "Snowing, -2C — Like your test coverage" },
       ];
       const c = conditions[Math.floor(Math.random() * conditions.length)];
       addLine("");
@@ -569,7 +569,7 @@
 
     vim() {
       addLine("You've entered vim.", "line-warning");
-      addLine("Good luck getting out. 😈", "line-error");
+      addLine("Good luck getting out.", "line-error");
       addLine("");
       addLine("(Hint: you can't. This is a website. Type a real command.)", "line-output");
     },
@@ -589,12 +589,12 @@
         return;
       }
       if (args.includes("push") && args.includes("force")) {
-        addLine("🚨 FORCE PUSH?! On a FRIDAY?! Bold move.", "line-error");
+        addLine("FORCE PUSH? On a Friday? Bold move.", "line-error");
         shake();
       } else if (args.includes("push")) {
         addLine("Everything up-to-date (because this is a website)", "line-success");
       } else if (args.includes("pull")) {
-        addLine("Already up to date. ✨", "line-success");
+        addLine("Already up to date.", "line-success");
       } else if (args.includes("blame")) {
         addLine("It was you. It's always you.", "line-warning");
       } else if (args.includes("commit")) {
@@ -630,11 +630,11 @@
       if (partyMode) {
         document.documentElement.classList.add("party");
         fireworks(20);
-        addLine("🎉🎊🥳 PARTY MODE ACTIVATED 🥳🎊🎉", "line-rainbow");
+        addLine("PARTY MODE ACTIVATED", "line-rainbow");
         addLine("Type 'party' again to stop the madness.", "line-output");
       } else {
         document.documentElement.classList.remove("party");
-        addLine("Party's over. Back to work. 😐", "line-output");
+        addLine("Party's over. Back to work.", "line-output");
       }
     },
 
@@ -642,7 +642,7 @@
       addLine("");
       ASCII_ROCKET.forEach(l => addLine(l, "line-ascii"));
       addLine("");
-      addLine("🚀 To infinity and beyond!", "line-rainbow");
+      addLine("To infinity and beyond.", "line-rainbow");
       addLine("");
     },
 
@@ -673,13 +673,13 @@
 
     async deploy() {
       addLine("");
-      addLine("Deploying to production... 🚀", "line-info");
+      addLine("Deploying to production...", "line-info");
       await fakeProgress("Building", 1500);
       await fakeProgress("Testing", 1000);
       await fakeProgress("Deploying", 2000);
       addLine("");
       glitch();
-      addLine("✅ Deployed successfully!", "line-success");
+      addLine("[OK] Deployed successfully.", "line-success");
       addLine("   (Not really. But wouldn't that be nice?)", "line-output");
       addLine("");
     },
@@ -692,11 +692,11 @@
       const traits = [
         "Species: Human (probably)",
         "Threat level: Minimal",
-        "Vibe check: Passed ✅",
+        "Vibe check: Passed",
         `Screen: ${window.innerWidth}x${window.innerHeight}`,
         `Browser: ${navigator.userAgent.includes("Chrome") ? "Chrome" : navigator.userAgent.includes("Firefox") ? "Firefox" : navigator.userAgent.includes("Safari") ? "Safari" : "Unknown"}`,
         "Coffee level: Needs refill",
-        "Status: Curious 🧐",
+        "Status: Curious",
       ];
       for (const t of traits) {
         addLine(`  ${t}`, "line-output");
@@ -740,7 +740,7 @@
     skull() {
       addLine("");
       ASCII_SKULL.forEach(l => addLine(l, "line-ascii"));
-      addLine("  ☠️  Memento mori  ☠️", "line-output");
+      addLine("  Memento mori.", "line-output");
       addLine("");
     },
 
@@ -770,7 +770,7 @@
     },
 
     async thanos() {
-      addLine("*snap* 💎", "line-warning");
+      addLine("*snap*", "line-warning");
       await sleep(500);
       const lines = output.querySelectorAll(".line");
       const toRemove = Array.from(lines).filter(() => Math.random() > 0.5);
@@ -825,7 +825,7 @@
       await commands["wake up"]();
     } else if (fullLower === "sudo rm -rf /") {
       shake();
-      addLine("😱 WITH SUDO?! You absolute maniac.", "line-error");
+      addLine("WITH SUDO? You absolute maniac.", "line-error");
       await rmrf();
     } else if (commands[cmd]) {
       await commands[cmd](args);
@@ -834,7 +834,7 @@
     } else if (fullLower === "make me a sandwich") {
       addLine("What? Make it yourself.", "line-error");
     } else if (fullLower === "sudo make me a sandwich") {
-      addLine("🥪 Okay.", "line-success");
+      addLine("Okay.", "line-success");
     } else if (fullLower.startsWith("say ")) {
       const msg = trimmed.slice(4);
       cowsay(msg);
@@ -902,7 +902,7 @@
       konamiBuffer = [];
       fireworks(30);
       addLine("");
-      addLine("🎮 KONAMI CODE ACTIVATED!", "line-rainbow");
+      addLine("KONAMI CODE ACTIVATED.", "line-rainbow");
       addLine("You are a person of exquisite taste.", "line-success");
       addLine("+30 lives. Not that you needed them.", "line-output");
       addLine("");
