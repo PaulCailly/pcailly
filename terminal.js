@@ -197,16 +197,13 @@
     const info = [
       ["OS", "Human OS 1.0 (Homo sapiens)"],
       ["Host", "pcailly.com"],
-      ["Kernel", "Brain v∞"],
-      ["Uptime", getAge() + " years"],
-      ["Shell", "bash + vibes"],
-      ["Resolution", `${window.innerWidth}x${window.innerHeight}`],
+      ["Location", "Paris, France"],
+      ["Company", "Deezer"],
+      ["Shell", "zsh"],
       ["Terminal", "pcailly-term v1.0"],
-      ["CPU", "Caffeine-Powered Neural Net"],
-      ["GPU", "Imagination RTX 9090"],
-      ["Memory", "∞ / ∞ (optimistic)"],
-      ["Disk", "Full of side projects"],
-      ["Languages", "TypeScript, JavaScript, Python, French"],
+      ["Resolution", `${window.innerWidth}x${window.innerHeight}`],
+      ["Languages", "TypeScript, JavaScript, Python"],
+      ["Repos", "31 public"],
     ];
 
     const art = [
@@ -237,11 +234,6 @@
     addHTML(palette, "line-output");
   }
 
-  function getAge() {
-    const born = new Date(1995, 0, 1); // placeholder
-    const diff = Date.now() - born.getTime();
-    return Math.floor(diff / (365.25 * 24 * 60 * 60 * 1000));
-  }
 
   // ── hack animation ──────────────────────────────────────
 
@@ -423,36 +415,22 @@
   const commands = {
     help() {
       addLine("");
-      addLine("Available commands:", "line-info");
-      addLine("");
       const cmds = [
         ["whoami", "Who am I?"],
-        ["about", "Learn more about me"],
-        ["links", "Show social links"],
-        ["skills", "List technical skills"],
-        ["neofetch", "System information"],
-        ["projects", "Featured projects"],
+        ["about", "Learn more"],
+        ["links", "Socials"],
+        ["skills", "Tech stack"],
+        ["projects", "What I build"],
         ["contact", "Get in touch"],
-        ["weather", "Current weather"],
-        ["fortune", "Random wisdom"],
-        ["cowsay [msg]", "A cow says things"],
-        ["coffee", "Brew some coffee"],
-        ["clear", "Clear the terminal"],
-        ["history", "Command history"],
-        ["date", "Current date"],
-        ["echo [text]", "Echo text back"],
-        ["ping [host]", "Ping a host"],
-        ["ls", "List directory"],
-        ["cat [file]", "Read a file"],
+        ["neofetch", "System info"],
+        ["clear", "Clear"],
       ];
       cmds.forEach(([cmd, desc]) => {
         addHTML(
-          `  <span style="color:#27c93f;min-width:160px;display:inline-block">${escapeHTML(cmd.padEnd(18))}</span><span style="color:#a0a0a0">${escapeHTML(desc)}</span>`,
+          `  <span style="color:#27c93f;min-width:140px;display:inline-block">${escapeHTML(cmd.padEnd(14))}</span><span style="color:#a0a0a0">${escapeHTML(desc)}</span>`,
           "line-output"
         );
       });
-      addLine("");
-      addLine("💡 There might be some hidden commands too...", "line-warning");
       addLine("");
     },
 
@@ -462,8 +440,8 @@
 
     about() {
       addLine("");
-      addLine("Hey! I'm Paul 👋", "line-output");
-      addLine("Builder & tinkerer. I like shipping things.", "line-output");
+      addLine("Paul Cailly — Paris, France", "line-output");
+      addLine("Software Engineer @ Deezer", "line-output");
       addLine("");
       addLine("→  hello@pcailly.com", "line-info");
       addLine("→  github.com/PaulCailly", "line-info");
@@ -485,29 +463,26 @@
 
     skills() {
       addLine("");
-      addLine("Languages    TypeScript, JavaScript, Python, Go", "line-output");
+      addLine("Languages    TypeScript, JavaScript, Python", "line-output");
       addLine("Frontend     React, Next.js, Tailwind, Ink", "line-output");
-      addLine("Backend      Node.js, AWS, GCP, Vercel", "line-output");
-      addLine("Tools        Git, Docker, Nix, Terraform", "line-output");
-      addLine("Vibes        Ship fast, break nothing", "line-output");
+      addLine("Backend      Node.js, NestJS, AWS, GCP", "line-output");
+      addLine("Tools        Git, Docker, Nix, Vercel", "line-output");
       addLine("");
     },
 
     projects() {
       addLine("");
-      addLine("Featured projects:", "line-info");
-      addLine("");
-      addHTML('  <a href="https://github.com/PaulCailly" target="_blank" style="color:#5b86e5;text-decoration:none">→ Check them out on GitHub</a>', "line-output");
+      addHTML('  <a href="https://github.com/PaulCailly/hermes-deploy" target="_blank" style="color:#5b86e5;text-decoration:none">hermes-deploy</a><span style="color:#a0a0a0">  Deploy hermes-agent to AWS/GCP</span>', "line-output");
+      addHTML('  <a href="https://github.com/PaulCailly/deezer-mcp" target="_blank" style="color:#5b86e5;text-decoration:none">deezer-mcp</a><span style="color:#a0a0a0">      MCP server for Deezer</span>', "line-output");
+      addHTML('  <a href="https://github.com/PaulCailly" target="_blank" style="color:#5b86e5;text-decoration:none">→ all repos</a>', "line-output");
       addLine("");
     },
 
     contact() {
       addLine("");
-      addLine("📬  hello@pcailly.com", "line-output");
-      addLine("🐙  github.com/PaulCailly", "line-output");
-      addLine("💼  linkedin.com/in/paulcailly", "line-output");
-      addLine("");
-      addLine("I read every email. Promise.", "line-info");
+      addLine("hello@pcailly.com", "line-output");
+      addLine("github.com/PaulCailly", "line-output");
+      addLine("linkedin.com/in/paulcailly", "line-output");
       addLine("");
     },
 
