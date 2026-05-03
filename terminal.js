@@ -174,7 +174,7 @@
     "   *  ****  *",
   ];
 
-  const FORTUNES = [
+  let FORTUNES = [
     "\"The best way to predict the future is to invent it.\" — Alan Kay",
     "\"Talk is cheap. Show me the code.\" — Linus Torvalds",
     "\"Any sufficiently advanced technology is indistinguishable from magic.\" — Arthur C. Clarke",
@@ -189,6 +189,12 @@
     "\"sudo make me a sandwich.\"",
     "\"rm -rf / — the solution to all your problems and all your files.\"",
   ];
+
+  // Load the full fortune collection (1000+)
+  fetch("fortunes.json")
+    .then(r => r.json())
+    .then(data => { if (Array.isArray(data) && data.length) FORTUNES = data; })
+    .catch(() => {});
 
   // ── reverse hack simulation ─────────────────────────────
 
